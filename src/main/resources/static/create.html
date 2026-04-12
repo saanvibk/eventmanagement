@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+<h2>Create Club</h2>
+
+<input id="name" placeholder="Club Name">
+<input id="desc" placeholder="Description">
+<input id="leader" placeholder="Leader SRN">
+
+<button onclick="createClub()">Create</button>
+
+</div>
+
+<script>
+function createClub() {
+    fetch('/clubs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            description: document.getElementById("desc").value,
+            leader: document.getElementById("leader").value
+        })
+    }).then(() => alert("Created!"));
+}
+</script>
+
+</body>
+</html>

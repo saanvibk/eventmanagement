@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+<h2>Join Club</h2>
+
+<input id="clubId" placeholder="Club ID">
+<input id="name" placeholder="Name">
+<input id="srn" placeholder="SRN">
+
+<button onclick="joinClub()">Join</button>
+
+</div>
+
+<script>
+function joinClub() {
+
+    const clubId = document.getElementById("clubId").value;
+    const name = document.getElementById("name").value;
+    const srn = document.getElementById("srn").value;
+
+    fetch(`/clubs/${clubId}/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: name,
+            srn: srn
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Joined successfully!");
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error joining club");
+    });
+}
+</script>
+
+</body>
+</html>

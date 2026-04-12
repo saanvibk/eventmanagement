@@ -1,0 +1,176 @@
+/* ---------- GLOBAL ---------- */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #a674eb, #9face6);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* ---------- TITLES ---------- */
+h1 {
+    color: white;
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* ---------- MENU ---------- */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.menu-box {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 200px;
+}
+
+.menu-box a {
+    display: block;
+    padding: 12px;
+    margin: 10px 0;
+    background: #6a0dad;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.menu-box a:hover {
+    background: #5a009d;
+}
+
+/* ---------- CARD (FOR FORMS) ---------- */
+.card {
+    background: white;
+    padding: 30px;
+    width: 320px;
+    margin: 80px auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* ---------- INPUTS ---------- */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+}
+
+input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 5px rgba(108,99,255,0.5);
+}
+
+/* ---------- BUTTON ---------- */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #6a0dad;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #5a009d;
+}
+
+.load-btn {
+    width: 50%;
+}
+
+/* ---------- GRID (FIXED) ---------- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 30px;
+}
+
+/* Center if only 1 card */
+.grid:has(.club-card:only-child),
+.grid:has(.member-card:only-child) {
+    display: flex;
+    justify-content: center;
+}
+
+/* ---------- CLUB CARD ---------- */
+.club-card {
+    background: #ffddfa;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.club-card h3 {
+    margin-top: 0;
+}
+
+/* ---------- CLUB DETAILS ---------- */
+.title {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 32px;
+}
+
+.subtitle {
+    text-align: center;
+    margin: 40px 0 20px;
+}
+
+.club-details-card {
+    width: 400px;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 15px;
+    background: rgb(255, 229, 249);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.club-details-card h2 {
+    margin-bottom: 15px;
+}
+
+.info p {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.info span {
+    font-weight: bold;
+}
+
+/* ---------- MEMBER CARD ---------- */
+.member-card {
+    background: rgb(255, 229, 249);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    transition: 0.3s;
+}
+
+.member-card:hover {
+    transform: scale(1.05);
+}

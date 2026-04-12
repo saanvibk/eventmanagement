@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1 class="title">Club Details</h1>
+
+<div class="club-details-card" id="clubContainer"></div>
+
+<h2 class="subtitle">Members</h2>
+<div id="membersContainer" class="grid"></div>
+
+<script>
+window.onload = function () {
+
+    const params = new URLSearchParams(window.location.search);
+    const clubId = params.get("clubId");
+
+    // 🔥 GET MEMBERS (this already has club info)
+    fetch(`/clubs/${clubId}/members`)
+        .then(res => res.json())
+        .then(data => {
+
+            const clubContainer = document.getElementById("clubContainer");
+            const membersContainer = document.getElementById("membersContainer");
+
+            membersContainer.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                clubContainer.innerHTML = "<p>No club data</p>";
+                membersContainer.innerHTML = "<p>No members</p>";
+                return;
+            }
+
+            // ✅ GET CLUB FROM FIRST MEMBER
+            const club = data[0].club;
+
+            clubContainer.innerHTML = `
+                <h2>${club.name}</h2>
+                <p><b>ID:</b> ${club.id}</p>
+                <p><b>Description:</b> ${club.description}</p>
+                <p><b>Leader:</b> ${club.leader}</p>
+            `;
+
+            // ✅ MEMBERS
+            data.forEach(member => {
+                const div = document.createElement("div");
+                div.className = "member-card";
+
+                div.innerHTML = `
+                    <h3>${member.name}</h3>
+                    <p>SRN: ${member.srn}</p>
+                `;
+
+                membersContainer.appendChild(div);
+            });
+        });
+
+};
+</script>
+
+</body>
+</html>

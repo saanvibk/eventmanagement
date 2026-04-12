@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2 style="text-align:center;">Club Members</h2>
+
+<div id="membersContainer" class="grid"></div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const clubId = params.get("clubId");
+
+fetch(`/clubs/${clubId}/members`)
+    .then(res => res.json())
+    .then(data => {
+
+        const container = document.getElementById("membersContainer");
+        container.innerHTML = "";
+
+        data.forEach(member => {
+            const div = document.createElement("div");
+            div.className = "club-card";
+
+            div.innerHTML = `
+                <h3>${member.name}</h3>
+                <p><b>SRN:</b> ${member.srn}</p>
+            `;
+
+            container.appendChild(div);
+        });
+    });
+
+</script>
+
+</body>
+</html>
