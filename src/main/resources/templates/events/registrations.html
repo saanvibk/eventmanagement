@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Registrations – ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/events/search}">Search</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a th:href="@{/events}">Events</a> /
+            <a th:href="@{/events/{id}(id=${event.id})}" th:text="${event.title}">Event</a> /
+            Registrations
+        </div>
+        <h1>Registrations</h1>
+        <p class="subtitle">
+            <span th:text="${registrationCount}">0</span> registered
+            <span th:if="${event.maxParticipants != null}">
+                / <span th:text="${event.maxParticipants}">0</span> max
+            </span>
+        </p>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+    <div class="table-container">
+        <table class="data-table" th:if="${!registrations.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Member ID</th>
+                    <th>Status</th>
+                    <th>Registered At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="reg, iter : ${registrations}">
+                    <td th:text="${iter.count}">1</td>
+                    <td th:text="${reg.memberId}">-</td>
+                    <td>
+                        <span class="status-badge"
+                              th:text="${reg.status}"
+                              th:classappend="'status-' + ${reg.status.toString().toLowerCase()}">
+                        </span>
+                    </td>
+                    <td th:text="${reg.registeredAt}">-</td>
+                    <td>
+                        <form th:action="@{/events/{id}/unregister(id=${event.id})}" method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('Cancel this registration?')">
+                            <input type="hidden" name="memberId" th:value="${reg.memberId}"/>
+                            <button class="btn btn-sm btn-danger"
+                                    th:disabled="${reg.status.name() == 'CANCELLED'}">
+                                Cancel
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="empty-state" th:if="${registrations.isEmpty()}">
+            <div class="empty-icon">👤</div>
+            <h3>No registrations yet</h3>
+            <p>No members have registered for this event.</p>
+        </div>
+    </div>
+
+    <div style="margin-top:20px">
+        <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-outline">← Back to Event</a>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | Event Management by Mem2</p>
+</footer>
+</body>
+</html>

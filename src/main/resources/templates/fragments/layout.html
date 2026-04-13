@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:replace="~{::title}">ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <a th:href="@{/}">🔗 ClubLink</a>
+    </div>
+    <div class="nav-links">
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/events/search}">Search Events</a>
+        <a th:href="@{/events/new}" class="btn-nav">+ New Event</a>
+    </div>
+</nav>
+
+<main class="main-content" th:replace="~{::main-content}"></main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | UE23CS352B OOAD Mini Project | Mem2 – Event Management</p>
+</footer>
+
+</body>
+</html>
