@@ -56,20 +56,6 @@ public class ClubController {
     // ========================
     //  Club Details
     // ========================
-    @GetMapping("/{clubId}")
-    public String getClubDetails(@PathVariable Long clubId, Model model) {
-
-        Club club = service.getClubById(clubId);
-
-        if (club == null) {
-            return "redirect:/clubs";
-        }
-
-        model.addAttribute("club", club);
-        model.addAttribute("members", service.getMembers(clubId));
-
-        return "clubs/details";
-    }
 
     // ========================
     //  Join Club
@@ -127,4 +113,19 @@ public class ClubController {
 
         return "redirect:/clubs/" + clubId;
     }
+    @GetMapping("/{clubId:\\d+}")    
+public String getClubDetails(@PathVariable Long clubId, Model model) {
+
+        Club club = service.getClubById(clubId);
+
+        if (club == null) {
+            return "redirect:/clubs";
+        }
+
+        model.addAttribute("club", club);
+        model.addAttribute("members", service.getMembers(clubId));
+
+        return "clubs/details";
+    }
+
 }

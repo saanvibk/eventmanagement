@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Club System</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
 <body>
 
-<h1>INDEX WORKING PROPERLY</h1>
+<div class="home-container">
 
-<!-- <a href="/clubs">Go to Clubs</a> -->
+    <h1>Club Management System</h1>
+
+    <div class="menu-box">
+        <a th:href="@{/clubs/create}">Create Club</a>
+        <a th:href="@{/clubs/join}">Join Club</a>
+        <a th:href="@{/clubs/leader}">Change Leader</a>
+        <a th:href="@{/clubs}">View Clubs</a>
+    </div>
+
+</div>
 
 </body>
 </html>
