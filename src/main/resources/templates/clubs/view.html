@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<h2 style="text-align:center;">All Clubs</h2>
+
+<!-- NAVIGATION -->
+<div style="text-align:center; margin-bottom:20px;">
+    <a href="/clubs/create"><button>Create Club</button></a>
+    <a href="/clubs/join"><button>Join Club</button></a>
+    <a href="/clubs/leader"><button>Change Leader</button></a>
+</div>
+
+<div class="grid">
+
+    <div th:if="${clubs != null}">
+        <div th:each="club : ${clubs}" class="club-card">
+
+            <h3 th:text="${club.name}"></h3>
+
+            <p><b>ID:</b> <span th:text="${club.id}"></span></p>
+
+            <p><b>Description:</b>
+                <span th:text="${club.description}"></span>
+            </p>
+
+            <p><b>Leader:</b>
+                <span th:text="${club.leader != null ? club.leader : 'Not Assigned'}"></span>
+            </p>
+
+            <a th:href="@{/clubs/{id}(id=${club.id})}">
+                <button>View Details</button>
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+<p th:if="${clubs == null or #lists.isEmpty(clubs)}" style="text-align:center;">
+    No clubs available
+</p>
+
+</body>
+</html>

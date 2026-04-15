@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="card">
+<h2>Change Leader</h2>
+
+<form method="post" onsubmit="this.action='/clubs/' + this.clubId.value + '/leader'">
+
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <input type="number" name="clubId" placeholder="Club ID" required>
+
+    <input type="text" name="newLeader" placeholder="New Leader SRN" required>
+
+    <button type="submit">Change</button>
+
+</form>
+
+</div>
+
+</body>
+</html>
