@@ -1,15 +1,21 @@
-package com.example.eventmanagement .model;
+package com.example.eventmanagement.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 /**
  * Event entity - represents a club event.
- * Design Principle: Open/Closed Principle (OCP)
- * - EventStatus enum allows new states without modifying this class.
  */
 @Entity
 @Table(name = "events")
@@ -33,27 +39,22 @@ public class Event {
     private LocalDate eventDate;
 
     private LocalTime startTime;
-
     private LocalTime endTime;
 
     @Column(nullable = false)
     private String venue;
 
-    private String category; // e.g. Technical, Cultural, Sports
-
+    private String category;
     private Integer maxParticipants;
-
     private Double registrationFee;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventStatus status;
 
-    // FK to Club (created by Mem1)
     @Column(name = "club_id")
     private Long clubId;
 
-    // FK to Member (organizer)
     @Column(name = "organizer_id")
     private Long organizerId;
 

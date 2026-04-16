@@ -1,15 +1,16 @@
 package com.example.eventmanagement.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.eventmanagement.factory.ClubFactory;
 import com.example.eventmanagement.model.Club;
 import com.example.eventmanagement.model.Member;
 import com.example.eventmanagement.repository.ClubRepository;
 import com.example.eventmanagement.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.example.eventmanagement.factory.ClubFactory;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class ClubService {
@@ -22,13 +23,11 @@ public class ClubService {
 
     // 🔹 Create club
     public Club createClub(Club club) {
-
         Club newClub = ClubFactory.createClub(
                 club.getName(),
                 club.getDescription(),
                 club.getLeader()
         );
-
         return clubRepo.save(newClub);
     }
 
@@ -37,7 +36,7 @@ public class ClubService {
         return clubRepo.findAll();
     }
 
-    // 🔹 Join club (UPDATED 🔥)
+    // 🔹 Join club
     public Member joinClub(Long clubId, Member member) {
 
         Club club = clubRepo.findById(clubId).orElse(null);
@@ -45,7 +44,6 @@ public class ClubService {
         if (club != null) {
             member.setClub(club);
 
-            // timestamps (match DB)
             member.setCreatedAt(LocalDateTime.now());
             member.setUpdatedAt(LocalDateTime.now());
 
@@ -67,7 +65,7 @@ public class ClubService {
         return null;
     }
 
-    // 🔹 Get members
+    // 🔹 Get members (BEST VERSION ✅)
     public List<Member> getMembers(Long clubId) {
         return memberRepo.findByClubId(clubId);
     }
