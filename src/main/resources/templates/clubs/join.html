@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="card">
+<h2>Join Club</h2>
+
+<form th:action="@{/clubs/join}" method="post">
+
+    <input type="number" name="clubId" placeholder="Club ID" required>
+
+    <input type="text" name="name" placeholder="Name" required>
+
+    <input type="text" name="srn" placeholder="SRN" required>
+
+    <input type="email" name="email" placeholder="Email" required>
+
+    <button type="submit">Join</button>
+</form>
+
+</div>
+
+</body>
+</html>

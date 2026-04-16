@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<h1 class="title">Club Details</h1>
+
+<div class="club-details-card">
+    <h2 th:text="${club.name}"></h2>
+
+    <p><b>ID:</b> <span th:text="${club.id}"></span></p>
+
+    <p><b>Description:</b>
+        <span th:text="${club.description}"></span>
+    </p>
+
+    <p><b>Leader:</b>
+        <span th:text="${club.leader != null ? club.leader : 'Not Assigned'}"></span>
+    </p>
+</div>
+
+<h2 class="subtitle">Members</h2>
+
+<!-- SAFE MEMBERS LOOP -->
+<div class="grid" th:if="${members != null}">
+    <div th:each="m : ${members}" class="member-card">
+        <h3 th:text="${m.name}"></h3>
+        <p>SRN: <span th:text="${m.srn}"></span></p>
+        <p>Email: <span th:text="${m.email}"></span></p>
+        <p>Role: <span th:text="${m.role}"></span></p>
+    </div>
+</div>
+
+<p th:if="${members == null or #lists.isEmpty(members)}" style="text-align:center;">
+    No members found
+</p>
+
+</body>
+</html>
