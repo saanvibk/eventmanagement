@@ -3,51 +3,129 @@ package com.example.eventmanagement.controller;
 import com.example.eventmanagement.model.Club;
 import com.example.eventmanagement.model.Member;
 import com.example.eventmanagement.service.ClubService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/clubs")
 public class ClubController {
 
-    @Autowired
-    private ClubService service;
+    private final ClubService service;
 
-    // Create Club
-    @PostMapping
-    public Club createClub(@RequestBody Club club) {
-        return service.createClub(club);
+    // 🔥 Constructor Injection (better than @Autowired)
+    public ClubController(ClubService service) {
+        this.service = service;
     }
 
-    // Get all clubs
+    // ========================
+    //  View All Clubs
+    // ========================
     @GetMapping
-    public List<Club> getAllClubs() {
-        return service.getAllClubs();
+    public String getAllClubs(Model model) {
+        List<Club> clubs = service.getAllClubs();
+        model.addAttribute("clubs", clubs);
+        return "clubs/view";
     }
 
-    // Join Club
-    @PostMapping("/{clubId}/join")
-    public Member joinClub(@PathVariable Long clubId, @RequestBody Member member) {
-        return service.joinClub(clubId, member);
+    // ========================
+    //  Create Club
+    // ========================
+    @GetMapping("/create")
+    public String showCreatePage(Model model) {
+        model.addAttribute("club", new Club());
+        return "clubs/create";
     }
 
-    // Change Leader
-    @PutMapping("/{clubId}/leader")
-    public Club changeLeader(@PathVariable Long clubId, @RequestParam String newLeader) {
-        return service.changeLeader(clubId, newLeader);
+    @PostMapping("/create")
+    public String createClub(@ModelAttribute Club club,
+                             RedirectAttributes redirectAttrs) {
+        try {
+            service.createClub(club);
+            redirectAttrs.addFlashAttribute("successMessage", "Club created successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/clubs";
     }
 
-    @GetMapping("/{clubId}/members")
-    public List<Member> getMembers(@PathVariable Long clubId) {
-    return service.getMembers(clubId);
+    // ========================
+    //  Club Details
+    // ========================
+
+    // ========================
+    //  Join Club
+    // ========================
+    @GetMapping("/join")
+    public String showJoinPage() {
+        return "clubs/join";
     }
-    
-    @GetMapping("/{clubId}")
-public Club getClubById(@PathVariable Long clubId) {
-    return service.getClubById(clubId);
+
+    @PostMapping("/join")
+    public String joinClub(@RequestParam Long clubId,
+                           @RequestParam String name,
+                           @RequestParam String srn,
+                           @RequestParam String email,
+                           RedirectAttributes redirectAttrs) {
+
+        try {
+            Member member = new Member();
+
+            member.setName(name);
+            member.setSrn(srn);
+            member.setEmail(email);
+            member.setRole("STUDENT");
+            member.setStatus("ACTIVE");
+
+            service.joinClub(clubId, member);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Joined club successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/clubs/" + clubId;
+    }
+
+    // ========================
+    //  Change Leader
+    // ========================
+    @GetMapping("/leader")
+    public String showLeaderPage() {
+        return "clubs/leader";
+    }
+
+    @PostMapping("/{clubId}/leader")
+    public String changeLeader(@PathVariable Long clubId,
+                               @RequestParam String newLeader,
+                               RedirectAttributes redirectAttrs) {
+
+        try {
+            service.changeLeader(clubId, newLeader);
+            redirectAttrs.addFlashAttribute("successMessage", "Leader updated!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/clubs/" + clubId;
+    }
+    @GetMapping("/{clubId:\\d+}")    
+public String getClubDetails(@PathVariable Long clubId, Model model) {
+
+        Club club = service.getClubById(clubId);
+
+        if (club == null) {
+            return "redirect:/clubs";
+        }
+
+        model.addAttribute("club", club);
+        model.addAttribute("members", service.getMembers(clubId));
+
+        return "clubs/details";
+    }
+
 }
-}
-
-
