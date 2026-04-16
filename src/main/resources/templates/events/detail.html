@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${event.title} + ' – ClubLink'">Event Detail</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/events/search}">Search</a>
+        <a th:href="@{/events/new}" class="btn-nav">+ New Event</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+    <div class="detail-container">
+
+        <!-- Header -->
+        <div class="detail-header">
+            <div class="breadcrumb">
+                <a th:href="@{/events}">Events</a> / <span th:text="${event.title}">Title</span>
+            </div>
+            <div class="detail-title-row">
+                <h1 th:text="${event.title}">Event Title</h1>
+                <span class="status-badge-lg"
+                      th:text="${event.status}"
+                      th:classappend="'status-' + ${event.status.toString().toLowerCase()}">
+                </span>
+            </div>
+        </div>
+
+        <!-- State Machine: transition buttons -->
+        <div class="state-actions">
+            <h3>🔄 Lifecycle Actions</h3>
+            <div class="state-buttons">
+                <!-- DRAFT → PUBLISHED -->
+                <form th:if="${event.status.name() == 'DRAFT'}"
+                      th:action="@{/events/{id}/publish(id=${event.id})}" method="post">
+                    <button class="btn btn-success">📢 Publish Event</button>
+                </form>
+                <!-- PUBLISHED → ONGOING -->
+                <form th:if="${event.status.name() == 'PUBLISHED'}"
+                      th:action="@{/events/{id}/start(id=${event.id})}" method="post">
+                    <button class="btn btn-primary">▶ Start Event</button>
+                </form>
+                <!-- ONGOING → COMPLETED -->
+                <form th:if="${event.status.name() == 'ONGOING'}"
+                      th:action="@{/events/{id}/complete(id=${event.id})}" method="post">
+                    <button class="btn btn-info">✅ Mark Complete</button>
+                </form>
+                <!-- Cancel (any non-completed state) -->
+                <form th:if="${event.status.name() != 'COMPLETED' and event.status.name() != 'CANCELLED'}"
+                      th:action="@{/events/{id}/cancel(id=${event.id})}" method="post"
+                      onsubmit="return confirm('Are you sure you want to cancel this event?')">
+                    <button class="btn btn-danger">❌ Cancel Event</button>
+                </form>
+            </div>
+            <!-- State diagram info -->
+            <div class="state-flow">
+                <span th:classappend="${event.status.name()=='DRAFT'?'active-state':''}">DRAFT</span>
+                → <span th:classappend="${event.status.name()=='PUBLISHED'?'active-state':''}">PUBLISHED</span>
+                → <span th:classappend="${event.status.name()=='ONGOING'?'active-state':''}">ONGOING</span>
+                → <span th:classappend="${event.status.name()=='COMPLETED'?'active-state':''}">COMPLETED</span>
+            </div>
+        </div>
+
+        <!-- Event Details -->
+        <div class="detail-grid">
+            <div class="detail-main">
+                <div class="info-card">
+                    <h2>Event Details</h2>
+                    <table class="info-table">
+                        <tr>
+                            <td>📅 Date</td>
+                            <td th:text="${event.eventDate}">-</td>
+                        </tr>
+                        <tr>
+                            <td>🕐 Time</td>
+                            <td>
+                                <span th:text="${event.startTime ?: 'TBD'}"></span>
+                                <span th:if="${event.endTime}"> – <span th:text="${event.endTime}"></span></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>📍 Venue</td>
+                            <td th:text="${event.venue}">-</td>
+                        </tr>
+                        <tr>
+                            <td>🏷 Category</td>
+                            <td th:text="${event.category ?: 'General'}">-</td>
+                        </tr>
+                        <tr>
+                            <td>👥 Max Participants</td>
+                            <td th:text="${event.maxParticipants ?: 'Unlimited'}">-</td>
+                        </tr>
+                        <tr>
+                            <td>💰 Registration Fee</td>
+                            <td th:text="${event.registrationFee != null ? '₹' + event.registrationFee : 'Free'}">-</td>
+                        </tr>
+                        <tr>
+                            <td>✅ Registered</td>
+                            <td th:text="${registrationCount}">0</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="info-card" th:if="${event.description}">
+                    <h2>Description</h2>
+                    <p th:text="${event.description}">Description</p>
+                </div>
+            </div>
+
+            <!-- Sidebar: Registration -->
+            <div class="detail-sidebar">
+                <div class="info-card">
+                    <h2>Registration</h2>
+
+                    <div th:if="${event.status.name() == 'PUBLISHED' or event.status.name() == 'ONGOING'}">
+                        <!-- Not registered -->
+                        <div th:if="${!isRegistered}">
+                            <p>You are not registered for this event.</p>
+                            <form th:action="@{/events/{id}/register(id=${event.id})}" method="post">
+                                <input type="hidden" name="memberId" th:value="${currentMemberId}"/>
+                                <button class="btn btn-success btn-block">Register Now</button>
+                            </form>
+                        </div>
+                        <!-- Already registered -->
+                        <div th:if="${isRegistered}">
+                            <div class="registered-badge">✅ You are registered!</div>
+                            <form th:action="@{/events/{id}/unregister(id=${event.id})}" method="post"
+                                  onsubmit="return confirm('Cancel your registration?')">
+                                <input type="hidden" name="memberId" th:value="${currentMemberId}"/>
+                                <button class="btn btn-danger btn-block">Cancel Registration</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div th:if="${event.status.name() == 'DRAFT'}">
+                        <p class="muted">Registration opens once event is published.</p>
+                    </div>
+                    <div th:if="${event.status.name() == 'COMPLETED' or event.status.name() == 'CANCELLED'}">
+                        <p class="muted">Registration is closed.</p>
+                    </div>
+
+                    <a th:href="@{/events/{id}/registrations(id=${event.id})}"
+                       class="btn btn-outline btn-block" style="margin-top:12px">
+                        View All Registrations
+                    </a>
+                </div>
+
+                <!-- Edit/Delete -->
+                <div class="info-card">
+                    <h2>Actions</h2>
+                    <a th:href="@{/events/{id}/edit(id=${event.id})}" class="btn btn-outline btn-block">✏️ Edit Event</a>
+                    <form th:action="@{/events/{id}/delete(id=${event.id})}" method="post"
+                          onsubmit="return confirm('Delete this event permanently?')">
+                        <button class="btn btn-danger btn-block" style="margin-top:8px">🗑 Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | Event Management by Mem2</p>
+</footer>
+</body>
+</html>

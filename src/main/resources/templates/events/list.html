@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>All Events – ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/events/search}">Search</a>
+        <a th:href="@{/events/new}" class="btn-nav">+ New Event</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="page-header">
+        <h1>All Events</h1>
+        <p class="subtitle">Manage and explore club events</p>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+    <!-- Quick Filter Bar -->
+    <div class="filter-bar">
+        <form th:action="@{/events/search}" method="get" class="inline-search">
+            <input type="text" name="keyword" placeholder="Search events…" class="search-input"/>
+            <select name="status" class="filter-select">
+                <option value="">All Status</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <a th:href="@{/events/new}" class="btn btn-success">+ Create Event</a>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="events-grid" th:if="${!events.isEmpty()}">
+        <div class="event-card" th:each="event : ${events}">
+            <div class="card-header">
+                <span class="category-badge" th:text="${event.category}">Category</span>
+                <span class="status-badge"
+                      th:text="${event.status}"
+                      th:classappend="'status-' + ${event.status.toString().toLowerCase()}">
+                </span>
+            </div>
+            <h3 class="card-title" th:text="${event.title}">Event Title</h3>
+            <div class="card-meta">
+                <span>📅 <span th:text="${event.eventDate}">Date</span></span>
+                <span>📍 <span th:text="${event.venue}">Venue</span></span>
+            </div>
+            <p class="card-desc" th:text="${#strings.abbreviate(event.description ?: 'No description', 100)}"></p>
+            <div class="card-footer">
+                <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-sm btn-primary">View Details</a>
+                <a th:href="@{/events/{id}/edit(id=${event.id})}" class="btn btn-sm btn-outline">Edit</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${events.isEmpty()}" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No events found</h3>
+        <p>Get started by creating your first event.</p>
+        <a th:href="@{/events/new}" class="btn btn-primary">Create Event</a>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | Event Management by Mem2</p>
+</footer>
+</body>
+</html>

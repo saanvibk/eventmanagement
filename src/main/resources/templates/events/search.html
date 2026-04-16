@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Search Events – ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/events}">All Events</a>
+        <a th:href="@{/events/new}" class="btn-nav">+ New Event</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="page-header">
+        <h1>🔍 Search Events</h1>
+        <p class="subtitle">Filter events by keyword, category, date, status, and more</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-card">
+        <form th:action="@{/events/search}" th:object="${searchDTO}" method="get" class="search-form">
+
+            <div class="search-row">
+                <div class="form-group flex-2">
+                    <label>Keyword</label>
+                    <input type="text" th:field="*{keyword}" placeholder="Search in title or description…"/>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select th:field="*{category}">
+                        <option value="">All Categories</option>
+                        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select th:field="*{status}">
+                        <option value="">All Status</option>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-row">
+                <div class="form-group">
+                    <label>From Date</label>
+                    <input type="date" th:field="*{fromDate}"/>
+                </div>
+                <div class="form-group">
+                    <label>To Date</label>
+                    <input type="date" th:field="*{toDate}"/>
+                </div>
+                <div class="form-group">
+                    <label>Max Fee (₹)</label>
+                    <input type="number" th:field="*{maxFee}" min="0" step="0.01" placeholder="Any"/>
+                </div>
+                <div class="form-group flex-end">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a th:href="@{/events/search}" class="btn btn-outline">Reset</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Results -->
+    <div class="results-header" th:if="${events != null}">
+        <span th:text="${events.size()} + ' event(s) found'">Results</span>
+    </div>
+
+    <div class="events-grid" th:if="${events != null and !events.isEmpty()}">
+        <div class="event-card" th:each="event : ${events}">
+            <div class="card-header">
+                <span class="category-badge" th:text="${event.category ?: 'General'}">Category</span>
+                <span class="status-badge"
+                      th:text="${event.status}"
+                      th:classappend="'status-' + ${event.status.toString().toLowerCase()}">
+                </span>
+            </div>
+            <h3 class="card-title" th:text="${event.title}">Event Title</h3>
+            <div class="card-meta">
+                <span>📅 <span th:text="${event.eventDate}">Date</span></span>
+                <span>📍 <span th:text="${event.venue}">Venue</span></span>
+                <span th:if="${event.registrationFee != null}">
+                    💰 ₹<span th:text="${event.registrationFee}">0</span>
+                </span>
+                <span th:if="${event.registrationFee == null}">💰 Free</span>
+            </div>
+            <p class="card-desc"
+               th:text="${#strings.abbreviate(event.description ?: 'No description.', 120)}">
+            </p>
+            <div class="card-footer">
+                <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-sm btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" th:if="${events != null and events.isEmpty()}">
+        <div class="empty-icon">🔎</div>
+        <h3>No events match your search</h3>
+        <p>Try different filters or <a th:href="@{/events}">browse all events</a>.</p>
+    </div>
+
+    <div class="empty-state" th:if="${events == null}">
+        <div class="empty-icon">🔍</div>
+        <h3>Use filters above to search events</h3>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | Event Management by Mem2</p>
+</footer>
+</body>
+</html>

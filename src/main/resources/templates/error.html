@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Error – ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links"><a th:href="@{/events}">Events</a></div>
+</nav>
+<main class="main-content">
+    <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <h3 th:text="${errorTitle ?: 'Error'}">Error</h3>
+        <p th:text="${errorMessage ?: 'An unexpected error occurred.'}">Message</p>
+        <a th:href="@{/events}" class="btn btn-primary" style="margin-top:16px">← Back to Events</a>
+    </div>
+</main>
+</body>
+</html>
