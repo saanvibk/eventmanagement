@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Members – ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/clubs}">Clubs</a>
+        <a th:href="@{/members}">Members</a>
+        <a th:href="@{/members/requests}">Requests</a>
+        <a th:href="@{/clubs/join}" class="btn-nav">+ Join Club</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="page-header">
+        <div class="breadcrumb"><a th:href="@{/}">Home</a> › Members</div>
+        <h1>Club Members</h1>
+        <p class="subtitle">All active and approved members</p>
+    </div>
+
+    <div th:if="${#lists.isEmpty(members)}" class="alert alert-error">
+        No members found. Be the first to <a th:href="@{/clubs/join}">join a club</a>!
+    </div>
+
+    <div th:if="${!#lists.isEmpty(members)}">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>SRN</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="member, stat : ${members}">
+                    <td th:text="${stat.count}"></td>
+                    <td th:text="${member.name}"></td>
+                    <td th:text="${member.srn}"></td>
+                    <td th:text="${member.email}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${member.status == 'ACTIVE'} ? 'badge-success' :
+                                             (${member.status == 'LEFT'} ? 'badge-danger' : 'badge-warning')"
+                              th:text="${member.status}"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{/members/{id}/edit(id=${member.id})}"
+                           class="btn btn-sm btn-outline">Edit Profile</a>
+                        <form th:if="${member.status != 'LEFT'}"
+                              th:action="@{/members/{id}/leave(id=${member.id})}"
+                              method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Mark this member as Left?')">
+                                Leave Club
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | UE23CS352B OOAD Mini Project | Mem3 – Membership Management</p>
+</footer>
+</body>
+</html>
