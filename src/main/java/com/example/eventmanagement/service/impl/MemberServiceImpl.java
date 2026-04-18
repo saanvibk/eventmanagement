@@ -10,6 +10,7 @@ import com.example.eventmanagement.model.MembershipRequest;
 import com.example.eventmanagement.repository.MemberRepository;
 import com.example.eventmanagement.repository.MembershipRequestRepository;
 import com.example.eventmanagement.service.MemberService;
+import com.example.eventmanagement.strategy.MembershipStrategy;
 import com.example.eventmanagement.strategy.impl.ApproveStrategy;
 import com.example.eventmanagement.strategy.impl.RejectStrategy;
 
@@ -22,6 +23,7 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private MembershipRequestRepository requestRepository;
 
+    // LSP: depend on the MembershipStrategy interface, not the concrete classes
     @Autowired
     private ApproveStrategy approveStrategy;
 
@@ -39,6 +41,28 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Member not found: " + id));
+    }
+
+    @Override
+    public Member updateMember(Long id, Member updatedMember) {
+        Member existing = getMemberById(id);
+        existing.setName(updatedMember.getName());
+        existing.setEmail(updatedMember.getEmail());
+        existing.setPhone(updatedMember.getPhone());
+        return memberRepository.save(existing);
+    }
+
+    @Override
+    public void leaveMember(Long id) {
+        Member member = getMemberById(id);
+        member.setStatus("LEFT");
+        memberRepository.save(member);
+    }
+
+    @Override
     public MembershipRequest createRequest(MembershipRequest request) {
         request.setStatus("PENDING");
         return requestRepository.save(request);
@@ -53,13 +77,10 @@ public class MemberServiceImpl implements MemberService {
     public void processRequest(Long requestId, boolean approve) {
         MembershipRequest request = requestRepository.findById(requestId).orElseThrow();
 
-        if (approve) {
-            approveStrategy.process(request);
-            request.setStatus("APPROVED");
-        } else {
-            rejectStrategy.process(request);
-            request.setStatus("REJECTED");
-        }
+        // LSP in action: both strategies are used via the MembershipStrategy interface
+        MembershipStrategy strategy = approve ? approveStrategy : rejectStrategy;
+        strategy.process(request);
+        request.setStatus(approve ? "APPROVED" : "REJECTED");
 
         requestRepository.save(request);
     }

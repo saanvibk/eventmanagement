@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.eventmanagement.model.MembershipRequest;
+import com.example.eventmanagement.model.Member;
 import com.example.eventmanagement.service.MemberService;
 
 @Controller
@@ -20,24 +20,14 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    // ── List all members ──────────────────────────────────────────
     @GetMapping
     public String listMembers(Model model) {
         model.addAttribute("members", memberService.getAllMembers());
         return "members/list";
     }
 
-    @GetMapping("/join")
-    public String joinForm(Model model) {
-        model.addAttribute("request", new MembershipRequest());
-        return "members/join";
-    }
-
-    @PostMapping("/join")
-    public String submit(@ModelAttribute MembershipRequest request) {
-        memberService.createRequest(request);
-        return "redirect:/members";
-    }
-
+    // ── Admin: view & process membership requests ─────────────────
     @GetMapping("/requests")
     public String requests(Model model) {
         model.addAttribute("requests", memberService.getAllRequests());
@@ -48,5 +38,26 @@ public class MemberController {
     public String process(@PathVariable Long id, @RequestParam boolean approve) {
         memberService.processRequest(id, approve);
         return "redirect:/members/requests";
+    }
+
+    // ── Profile Update ────────────────────────────────────────────
+    @GetMapping("/{id}/edit")
+    public String editProfile(@PathVariable Long id, Model model) {
+        model.addAttribute("member", memberService.getMemberById(id));
+        return "members/edit";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateProfile(@PathVariable Long id,
+                                @ModelAttribute Member updatedMember) {
+        memberService.updateMember(id, updatedMember);
+        return "redirect:/members";
+    }
+
+    // ── Leave Club ────────────────────────────────────────────────
+    @PostMapping("/{id}/leave")
+    public String leaveClub(@PathVariable Long id) {
+        memberService.leaveMember(id);
+        return "redirect:/members";
     }
 }

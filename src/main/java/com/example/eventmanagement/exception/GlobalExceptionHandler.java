@@ -1,4 +1,4 @@
-package com.example.eventmanagement .exception;
+package com.example.eventmanagement.exception;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

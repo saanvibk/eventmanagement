@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import com.example.eventmanagement.factory.ClubFactory;
 import com.example.eventmanagement.model.Club;
 import com.example.eventmanagement.model.Member;
+import com.example.eventmanagement.model.MembershipRequest;
 import com.example.eventmanagement.repository.ClubRepository;
 import com.example.eventmanagement.repository.MemberRepository;
+import com.example.eventmanagement.repository.MembershipRequestRepository;
 
 @Service
 public class ClubService {
@@ -21,7 +23,9 @@ public class ClubService {
     @Autowired
     private MemberRepository memberRepo;
 
-    // 🔹 Create club
+    @Autowired
+    private MembershipRequestRepository membershipRequestRepo;
+
     public Club createClub(Club club) {
         Club newClub = ClubFactory.createClub(
                 club.getName(),
@@ -31,28 +35,32 @@ public class ClubService {
         return clubRepo.save(newClub);
     }
 
-    // 🔹 Get all clubs
     public List<Club> getAllClubs() {
         return clubRepo.findAll();
     }
 
-    // 🔹 Join club
     public Member joinClub(Long clubId, Member member) {
 
         Club club = clubRepo.findById(clubId).orElse(null);
 
         if (club != null) {
-            member.setClub(club);
 
-            member.setCreatedAt(LocalDateTime.now());
-            member.setUpdatedAt(LocalDateTime.now());
+            MembershipRequest request = new MembershipRequest();
 
-            return memberRepo.save(member);
+            request.setName(member.getName());
+            request.setEmail(member.getEmail());
+            request.setSrn(member.getSrn());
+            request.setClubId(clubId);
+            request.setStatus("PENDING");   // ← was "REQUESTED", fixed to match approval logic
+
+            membershipRequestRepo.save(request);
+
+            return null;
         }
+
         return null;
     }
 
-    // 🔹 Change leader
     public Club changeLeader(Long clubId, String newLeader) {
 
         Club club = clubRepo.findById(clubId).orElse(null);
@@ -62,15 +70,14 @@ public class ClubService {
             club.setUpdatedAt(LocalDateTime.now());
             return clubRepo.save(club);
         }
+
         return null;
     }
 
-    // 🔹 Get members (BEST VERSION ✅)
     public List<Member> getMembers(Long clubId) {
         return memberRepo.findByClubId(clubId);
     }
 
-    // 🔹 Get single club
     public Club getClubById(Long clubId) {
         return clubRepo.findById(clubId).orElse(null);
     }

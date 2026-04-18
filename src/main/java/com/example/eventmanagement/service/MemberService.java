@@ -11,6 +11,12 @@ public interface MemberService {
 
     List<Member> getAllMembers();
 
+    Member getMemberById(Long id);
+
+    Member updateMember(Long id, Member updatedMember);
+
+    void leaveMember(Long id);
+
     MembershipRequest createRequest(MembershipRequest request);
 
     List<MembershipRequest> getAllRequests();

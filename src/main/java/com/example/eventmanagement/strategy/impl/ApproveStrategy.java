@@ -16,12 +16,15 @@ public class ApproveStrategy implements MembershipStrategy {
 
     @Override
     public void process(MembershipRequest request) {
-        Member member = new Member(
-                request.getName(),
-                request.getEmail(),
-                request.getPhone(),
-                "ACTIVE"
-        );
+
+        Member member = new Member();
+
+        member.setName(request.getName());
+        member.setEmail(request.getEmail());
+        member.setSrn(request.getSrn()); // ✅ use SRN
+
+        // If you have status field in Member
+        member.setStatus("ACTIVE");
 
         memberRepository.save(member);
     }

@@ -2,8 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Edit Event – ClubLink</title>
+    <title>Edit Profile – ClubLink</title>
     <link rel="stylesheet" th:href="@{/css/events.css}"/>
 </head>
 <body>
@@ -11,86 +10,61 @@
 <nav class="navbar">
     <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
     <div class="nav-links">
-        <a th:href="@{/events}">Events</a>
-        <a th:href="@{/events/search}">Search</a>
+        <a th:href="@{/clubs}">Clubs</a>
+        <a th:href="@{/members}">Members</a>
+        <a th:href="@{/members/requests}">Requests</a>
+        <a th:href="@{/clubs/join}" class="btn-nav">+ Join Club</a>
     </div>
 </nav>
 
 <main class="main-content">
-    <div class="form-container">
-        <div class="form-header">
-            <h1>Edit Event</h1>
-            <p>Update the details for <strong th:text="${event.title}">this event</strong></p>
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Home</a> › <a th:href="@{/members}">Members</a> › Edit Profile
         </div>
+        <h1>Edit Profile</h1>
+        <p class="subtitle">Update member details below</p>
+    </div>
 
-        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
-
-        <form th:action="@{/events/{id}/edit(id=${event.id})}"
-              th:object="${event}" method="post" class="event-form">
-
-            <div class="form-group">
-                <label>Event Title *</label>
-                <input type="text" th:field="*{title}" required/>
-            </div>
+    <div class="form-card">
+        <form th:action="@{/members/{id}/edit(id=${member.id})}" th:object="${member}" method="post">
 
             <div class="form-group">
-                <label>Description</label>
-                <textarea th:field="*{description}" rows="4"></textarea>
+                <label for="name">Full Name</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" required/>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Event Date *</label>
-                    <input type="date" th:field="*{eventDate}" required/>
-                </div>
-                <div class="form-group">
-                    <label>Start Time</label>
-                    <input type="time" th:field="*{startTime}"/>
-                </div>
-                <div class="form-group">
-                    <label>End Time</label>
-                    <input type="time" th:field="*{endTime}"/>
-                </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" th:field="*{email}" class="form-control" required/>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Venue *</label>
-                    <input type="text" th:field="*{venue}" required/>
-                </div>
-                <div class="form-group">
-                    <label>Category</label>
-                    <select th:field="*{category}">
-                        <option value="">-- Select --</option>
-                        <option th:each="cat : ${categories}"
-                                th:value="${cat}" th:text="${cat}"
-                                th:selected="${cat == event.category}">
-                        </option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" th:field="*{phone}" class="form-control" placeholder="Optional"/>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Max Participants</label>
-                    <input type="number" th:field="*{maxParticipants}" min="1"/>
-                </div>
-                <div class="form-group">
-                    <label>Registration Fee (₹)</label>
-                    <input type="number" th:field="*{registrationFee}" step="0.01" min="0"/>
-                </div>
+            <div class="form-group">
+                <label>SRN</label>
+                <input type="text" th:value="${member.srn}" class="form-control" disabled/>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <input type="text" th:value="${member.status}" class="form-control" disabled/>
+                <small style="color:var(--muted)">Status is managed by the system.</small>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-success">💾 Save Changes</button>
-                <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a th:href="@{/members}" class="btn btn-outline">Cancel</a>
             </div>
         </form>
     </div>
 </main>
 
 <footer class="footer">
-    <p>ClubLink &copy; 2025 | Event Management by Mem2</p>
+    <p>ClubLink &copy; 2025 | UE23CS352B OOAD Mini Project | Mem3 – Membership Management</p>
 </footer>
 </body>
 </html>

@@ -1,15 +1,20 @@
 package com.example.eventmanagement.controller;
 
-import com.example.eventmanagement.model.Club;
-import com.example.eventmanagement.model.Member;
-import com.example.eventmanagement.service.ClubService;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import com.example.eventmanagement.model.Club;
+import com.example.eventmanagement.model.Member;
+import com.example.eventmanagement.service.ClubService;
 
 @Controller
 @RequestMapping("/clubs")
@@ -17,7 +22,7 @@ public class ClubController {
 
     private final ClubService service;
 
-    // 🔥 Constructor Injection (better than @Autowired)
+    // 🔥 Constructor Injection
     public ClubController(ClubService service) {
         this.service = service;
     }
@@ -54,11 +59,7 @@ public class ClubController {
     }
 
     // ========================
-    //  Club Details
-    // ========================
-
-    // ========================
-    //  Join Club
+    //  Join Club (FIXED)
     // ========================
     @GetMapping("/join")
     public String showJoinPage() {
@@ -78,12 +79,15 @@ public class ClubController {
             member.setName(name);
             member.setSrn(srn);
             member.setEmail(email);
-            member.setRole("STUDENT");
-            member.setStatus("ACTIVE");
 
+            // ❌ IMPORTANT: DO NOT SET ROLE OR STATUS HERE
+            // member.setRole("STUDENT");
+            // member.setStatus("ACTIVE");
+
+            // ✅ Send to MembershipRequest flow
             service.joinClub(clubId, member);
 
-            redirectAttrs.addFlashAttribute("successMessage", "Joined club successfully!");
+            redirectAttrs.addFlashAttribute("successMessage", "Request sent successfully!");
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", e.getMessage());
         }
@@ -113,8 +117,12 @@ public class ClubController {
 
         return "redirect:/clubs/" + clubId;
     }
-    @GetMapping("/{clubId:\\d+}")    
-public String getClubDetails(@PathVariable Long clubId, Model model) {
+
+    // ========================
+    //  Club Details
+    // ========================
+    @GetMapping("/{clubId:\\d+}")
+    public String getClubDetails(@PathVariable Long clubId, Model model) {
 
         Club club = service.getClubById(clubId);
 
@@ -127,5 +135,4 @@ public String getClubDetails(@PathVariable Long clubId, Model model) {
 
         return "clubs/details";
     }
-
 }

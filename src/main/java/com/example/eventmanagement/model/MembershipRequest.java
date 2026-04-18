@@ -14,28 +14,33 @@ public class MembershipRequest {
 
     private String name;
     private String email;
-    private String phone;
-    private String status; // PENDING / APPROVED / REJECTED
+    private String srn;      //  ADD THIS
+    private Long clubId;     //  ADD THIS
+    private String status;
 
     public MembershipRequest() {}
 
-    public MembershipRequest(String name, String email, String phone, String status) {
+    public MembershipRequest(String name, String email, String srn, Long clubId, String status) {
         this.name = name;
         this.email = email;
-        this.phone = phone;
+        this.srn = srn;
+        this.clubId = clubId;
         this.status = status;
     }
 
-    // Getters & Setters
+    // Getters
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getEmail() { return email; }
-    public String getPhone() { return phone; }
+    public String getSrn() { return srn; }
+    public Long getClubId() { return clubId; }
     public String getStatus() { return status; }
 
+    // Setters
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
     public void setEmail(String email) { this.email = email; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public void setSrn(String srn) { this.srn = srn; }
+    public void setClubId(Long clubId) { this.clubId = clubId; }
     public void setStatus(String status) { this.status = status; }
 }
