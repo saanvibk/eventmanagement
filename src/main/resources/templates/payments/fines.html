@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fines &amp; Notifications – ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/payments}">Payments</a>
+        <a th:href="@{/payments/fines}" class="btn-nav">⚠️ Fines</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="page-header">
+        <h1>⚠️ Fines &amp; Notifications</h1>
+        <p class="subtitle">Overdue payments and accumulated fines</p>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+    <div class="info-card" th:if="${!fines.isEmpty()}">
+        <h2>Outstanding Fines</h2>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <td><b>#</b></td>
+                    <td><b>Payment</b></td>
+                    <td><b>Reason</b></td>
+                    <td><b>Amount</b></td>
+                    <td><b>Due Since</b></td>
+                    <td><b>Actions</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="fine : ${fines}">
+                    <td th:text="${fine.id}">1</td>
+                    <td>
+                        <a th:href="@{/payments/{id}(id=${fine.paymentId})}"
+                           th:text="'Payment #' + ${fine.paymentId}">Payment</a>
+                    </td>
+                    <td th:text="${fine.reason ?: 'Late payment'}">Late payment</td>
+                    <td th:text="'₹' + ${fine.amount}">₹0</td>
+                    <td th:text="${fine.createdAt ?: '—'}">—</td>
+                    <td>
+                        <form th:action="@{/payments/fines/{id}/pay(id=${fine.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-sm btn-success">Pay Fine</button>
+                        </form>
+                        <form th:action="@{/payments/fines/{id}/waive(id=${fine.id})}" method="post" style="display:inline;"
+                              onsubmit="return confirm('Waive this fine?')">
+                            <button class="btn btn-sm btn-outline">Waive</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${fines.isEmpty()}" class="empty-state">
+        <div class="empty-icon">🎉</div>
+        <h3>No outstanding fines</h3>
+        <p>All payments are up to date.</p>
+        <a th:href="@{/payments}" class="btn btn-primary">Back to Payments</a>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | Payment Management by Mem4</p>
+</footer>
+</body>
+</html>

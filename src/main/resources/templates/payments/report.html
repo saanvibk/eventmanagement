@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Payment Report – ClubLink</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/payments}">Payments</a>
+        <a th:href="@{/payments/report}" class="btn-nav">📄 Report</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="detail-container">
+
+        <div class="detail-header">
+            <div class="breadcrumb">
+                <a th:href="@{/payments}">Payments</a> / <span>Report</span>
+            </div>
+            <div class="detail-title-row">
+                <h1>📄 Payment Report</h1>
+                <span class="status-badge-lg status-published">Facade</span>
+            </div>
+            <p class="subtitle">
+                Built via <code>PaymentGenerationService</code> — delegates to
+                <code>EventDetailsFacade</code>, <code>PaymentDetailsFacade</code>, and
+                <code>ClubDetailsFacade</code>.
+            </p>
+        </div>
+
+        <!-- Member block -->
+        <div class="info-card">
+            <h2>👤 Member</h2>
+            <table class="info-table">
+                <tr><td>Name</td><td th:text="${member?.name ?: 'N/A'}">—</td></tr>
+                <tr><td>ID</td><td th:text="${member?.id ?: '—'}">—</td></tr>
+                <tr><td>Email</td><td th:text="${member?.email ?: '—'}">—</td></tr>
+            </table>
+        </div>
+
+        <div class="detail-grid">
+            <!-- Event details (from EventDetailsFacade) -->
+            <div class="detail-main">
+                <div class="info-card">
+                    <h2>🎟 Event Details</h2>
+                    <p class="muted">via <code>EventDetailsFacade.getDetails()</code></p>
+                    <table class="info-table">
+                        <tr><td>Title</td><td th:text="${eventDetails?.title ?: '—'}">—</td></tr>
+                        <tr><td>Date</td><td th:text="${eventDetails?.eventDate ?: '—'}">—</td></tr>
+                        <tr><td>Venue</td><td th:text="${eventDetails?.venue ?: '—'}">—</td></tr>
+                        <tr><td>Fee</td><td th:text="${eventDetails?.registrationFee != null ? '₹' + eventDetails.registrationFee : '—'}">—</td></tr>
+                    </table>
+                </div>
+
+                <!-- Club details (from ClubDetailsFacade) -->
+                <div class="info-card">
+                    <h2>🏛 Club Details</h2>
+                    <p class="muted">via <code>ClubDetailsFacade.getDetails()</code></p>
+                    <table class="info-table">
+                        <tr><td>Name</td><td th:text="${clubDetails?.name ?: '—'}">—</td></tr>
+                        <tr><td>Category</td><td th:text="${clubDetails?.category ?: '—'}">—</td></tr>
+                        <tr><td>Leader</td><td th:text="${clubDetails?.leaderName ?: '—'}">—</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payment details + totals (from PaymentDetailsFacade) -->
+            <div class="detail-sidebar">
+                <div class="info-card">
+                    <h2>💳 Payment Summary</h2>
+                    <p class="muted">via <code>PaymentDetailsFacade.getDetails()</code></p>
+                    <table class="info-table">
+                        <tr><td>Payment ID</td><td th:text="${paymentDetails?.id ?: '—'}">—</td></tr>
+                        <tr><td>Type</td><td th:text="${paymentDetails?.type ?: '—'}">—</td></tr>
+                        <tr><td>Amount</td><td th:text="'₹' + (${paymentDetails?.amount} ?: 0)">—</td></tr>
+                        <tr><td>Status</td>
+                            <td>
+                                <span class="status-badge"
+                                      th:text="${paymentDetails?.status ?: '—'}"
+                                      th:classappend="'status-' + ${paymentDetails?.status?.toString()?.toLowerCase() ?: 'pending'}">
+                                </span>
+                            </td>
+                        </tr>
+                        <tr><td>Paid At</td><td th:text="${paymentDetails?.paidAt ?: '—'}">—</td></tr>
+                    </table>
+                </div>
+
+                <div class="info-card">
+                    <h2>📊 Totals</h2>
+                    <table class="info-table">
+                        <tr><td>Total Paid</td><td th:text="'₹' + (${totalPaid} ?: 0)">—</td></tr>
+                        <tr><td>Outstanding</td><td th:text="'₹' + (${totalPending} ?: 0)">—</td></tr>
+                        <tr><td>Fines</td><td th:text="'₹' + (${totalFines} ?: 0)">—</td></tr>
+                    </table>
+                </div>
+
+                <div class="info-card">
+                    <h2>🖨 Export</h2>
+                    <a href="#" onclick="window.print();return false;" class="btn btn-outline btn-block">Print Receipt</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | Payment Management by Mem4</p>
+</footer>
+</body>
+</html>

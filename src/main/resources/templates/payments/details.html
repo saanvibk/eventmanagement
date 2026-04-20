@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="'Payment #' + ${payment.id} + ' – ClubLink'">Payment Detail</title>
+    <link rel="stylesheet" th:href="@{/css/events.css}"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}">🔗 ClubLink</a></div>
+    <div class="nav-links">
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/payments}">Payments</a>
+        <a th:href="@{/payments/new}" class="btn-nav">+ New Payment</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+    <div class="detail-container">
+
+        <div class="detail-header">
+            <div class="breadcrumb">
+                <a th:href="@{/payments}">Payments</a> /
+                <span th:text="'Payment #' + ${payment.id}">Payment #1</span>
+            </div>
+            <div class="detail-title-row">
+                <h1 th:text="'₹' + ${payment.amount}">₹0</h1>
+                <span class="status-badge-lg"
+                      th:text="${payment.status}"
+                      th:classappend="'status-' + ${payment.status.toString().toLowerCase()}">
+                </span>
+            </div>
+        </div>
+
+        <!-- Lifecycle transitions (mirrors event detail) -->
+        <div class="state-actions">
+            <h3>🔄 Payment Lifecycle</h3>
+            <div class="state-buttons">
+                <form th:if="${payment.status.name() == 'PENDING'}"
+                      th:action="@{/payments/{id}/confirm(id=${payment.id})}" method="post">
+                    <button class="btn btn-success">✅ Mark Paid</button>
+                </form>
+                <form th:if="${payment.status.name() == 'PAID'}"
+                      th:action="@{/payments/{id}/confirm(id=${payment.id})}" method="post">
+                    <button class="btn btn-primary">🔒 Confirm</button>
+                </form>
+                <form th:if="${payment.status.name() == 'PENDING' or payment.status.name() == 'PAID'}"
+                      th:action="@{/payments/{id}/fail(id=${payment.id})}" method="post"
+                      onsubmit="return confirm('Mark this payment as failed?')">
+                    <button class="btn btn-danger">❌ Mark Failed</button>
+                </form>
+            </div>
+            <div class="state-flow">
+                <span th:classappend="${payment.status.name()=='PENDING'?'active-state':''}">PENDING</span>
+                → <span th:classappend="${payment.status.name()=='PAID'?'active-state':''}">PAID</span>
+                → <span th:classappend="${payment.status.name()=='CONFIRMED'?'active-state':''}">CONFIRMED</span>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-main">
+                <div class="info-card">
+                    <h2>Payment Details</h2>
+                    <table class="info-table">
+                        <tr><td>🆔 Payment ID</td><td th:text="${payment.id}">-</td></tr>
+                        <tr><td>🏷 Type</td><td th:text="${payment.type}">-</td></tr>
+                        <tr><td>💰 Amount</td><td th:text="'₹' + ${payment.amount}">-</td></tr>
+                        <tr><td>📋 Status</td><td th:text="${payment.status}">-</td></tr>
+                        <tr><td>🗓 Paid At</td><td th:text="${payment.paidAt ?: 'Not yet paid'}">-</td></tr>
+                        <tr><td>📌 Created</td><td th:text="${payment.createdAt ?: '—'}">-</td></tr>
+                        <tr><td>✏️ Updated</td><td th:text="${payment.updatedAt ?: '—'}">-</td></tr>
+                    </table>
+                </div>
+
+                <div class="info-card">
+                    <h2>Linked Records</h2>
+                    <table class="info-table">
+                        <tr th:if="${payment.eventId}">
+                            <td>🎟 Event</td>
+                            <td>
+                                <a th:href="@{/events/{id}(id=${payment.eventId})}"
+                                   th:text="'Event #' + ${payment.eventId}">Event</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${payment.clubId}">
+                            <td>🏛 Club</td>
+                            <td>
+                                <a th:href="@{/clubs/{id}(id=${payment.clubId})}"
+                                   th:text="'Club #' + ${payment.clubId}">Club</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>👤 Member</td>
+                            <td th:text="'Member #' + ${payment.memberId}">Member</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="detail-sidebar">
+                <div class="info-card">
+                    <h2>Receipt</h2>
+                    <p class="muted">Auto-generated via the Facade pattern (EventDetails + PaymentDetails + ClubDetails).</p>
+                    <a th:href="@{/payments/{id}/report(id=${payment.id})}"
+                       class="btn btn-primary btn-block">📄 View Report</a>
+                </div>
+
+                <div class="info-card">
+                    <h2>Actions</h2>
+                    <form th:action="@{/payments/{id}/delete(id=${payment.id})}" method="post"
+                          onsubmit="return confirm('Delete this payment record?')">
+                        <button class="btn btn-danger btn-block">🗑 Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>ClubLink &copy; 2025 | Payment Management by Mem4</p>
+</footer>
+</body>
+</html>
