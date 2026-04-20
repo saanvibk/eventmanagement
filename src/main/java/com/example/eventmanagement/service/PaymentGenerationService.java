@@ -1,25 +1,22 @@
-//FACADE PATTERN - DELEGATE RESPONSIBILITIES TO SUBSYSTEMS
+package com.example.eventmanagement.service;
 
-package com.example.eventmanagement .service;
-package structural.facade;
+import com.example.eventmanagement.facade.ClubDetails;
+import com.example.eventmanagement.facade.EventDetails;
+import com.example.eventmanagement.facade.PaymentDetails;
 
-//import com.example.eventmanagement .dto.EventSearchDTO;
-import com.example.eventmanagement .model.Payment;
-import com.example.eventmanagement .model.Event.PaymentStatus;
+/**
+ * PaymentGenerationService – contract for assembling a payment report
+ * from the Event, Club, and Payment subsystems.
+ *
+ * ✅ Design Pattern: Facade
+ *    - Each getter delegates to a concrete {@code DetailsFacade} instead of
+ *      talking to each subsystem directly.
+ */
+public interface PaymentGenerationService {
 
-import java.util.List;
-import java.util.Optional;
+    EventDetails getEventDetails(Long eventId);
 
-//2) List the payments a member has made (member dashboard) - implement facade pattern to generate report
+    ClubDetails getClubDetails(Long clubId);
 
-public class PaymentGenerationService{
-
-    //Get event details to add to the report
-    public EventDetails getEventDetails(Long Id);
-
-    //Get club details to add to the report
-    public ClubDetails getClubDetails(Long Id);
-
-    //Get payment details to add to the report
-    public PaymentDetails getPaymentDetails(Long Id);
+    PaymentDetails getPaymentDetails(Long paymentId);
 }

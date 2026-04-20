@@ -1,30 +1,48 @@
-package com.example.eventmanagement .service;
+package com.example.eventmanagement.service;
 
-//import com.example.eventmanagement .dto.EventSearchDTO;
-import com.example.eventmanagement .model.Payment;
-import com.example.eventmanagement .model.Event.PaymentStatus;
+import com.example.eventmanagement.model.Payment;
+import com.example.eventmanagement.model.Payment.PaymentStatus;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * PaymentService – contract for payment management (Mem4).
+ *
+ * Responsibilities:
+ *   1) Save payments to the database.
+ *   2) List payments made by a member (member dashboard).
+ *   3) Remove payments if a member unregisters from an event or leaves a club.
+ *   4) Generate fine notifications for overdue payments.
+ */
 public interface PaymentService {
 
-    //Define payment management operations
-
-    //1) Save Payment in database (payments)
+    // CRUD
     Payment savePayment(Payment payment);
 
-    //3) Remove Payment from database if member unregisters from a club / event
-    @Modifying
-    @Query("delete from payments p where p.memberId = ?1 AND p.eventId = ?2")
-    void deletePaymentByMemberAndEventId(Long memberId, Long eventId); //To delete payment of a member for an event -> Should happen if a member cancels
+    Optional<Payment> findById(Long id);
 
-    @Modifying
-    @Query("delete from payments p where p.memberId = ?1 AND p.clubId = ?2")
-    void deletePaymentByMemberAndClubId(Long memberId, Long clubId);  //To delete payment of a member if a member if member leaves club -> member is removed from members table
+    List<Payment> findAll();
 
-    //minor functionality -> fine_notifications (use table fine_notifications)
-    void generateFineNotification(Long memberId, Long paymentId); //fetch paymentId records for that member from payments table
-                                                                  //see paid_at time -> if longer than required time -> generate fine notification
-                                                                  //update fine_notifications table
+    List<Payment> findByMember(Long memberId);
+
+    // State transitions
+    Payment markPaid(Long paymentId);
+
+    Payment confirmPayment(Long paymentId);
+
+    Payment failPayment(Long paymentId);
+
+    void deletePayment(Long id);
+
+    // Cascade deletes
+    void deletePaymentByMemberAndEventId(Long memberId, Long eventId);
+
+    void deletePaymentByMemberAndClubId(Long memberId, Long clubId);
+
+    // Totals for dashboard tiles
+    double totalByStatus(Long memberId, PaymentStatus status);
+
+    // Fines (minor feature)
+    void generateFineNotification(Long memberId, Long paymentId);
 }

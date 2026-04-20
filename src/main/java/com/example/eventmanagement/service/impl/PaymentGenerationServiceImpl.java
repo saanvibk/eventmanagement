@@ -1,49 +1,50 @@
-package com.example.eventmanagement .service.impl;
-package structural.facade;
+package com.example.eventmanagement.service.impl;
 
-//import com.example.eventmanagement .dto.EventSearchDTO;
-import com.example.eventmanagement .model.Payment;
-import com.example.eventmanagement .model.Payment.PaymentStatus;
-import com.example.eventmanagement .model.EventRegistration;
-//import com.example.eventmanagement .observer.EventObserver;
-//import com.example.eventmanagement .observer.EventSubject;
-//import com.example.eventmanagement .observer.impl.DashboardNotificationObserver;
-//import com.example.eventmanagement .observer.impl.EmailNotificationObserver;
-import com.example.eventmanagement .repository.PaymentRepository;
-import com.example.eventmanagement .service.PaymentGenerationService;
-import jakarta.annotation.PostConstruct;
+import com.example.eventmanagement.facade.ClubDetails;
+import com.example.eventmanagement.facade.ClubDetailsFacade;
+import com.example.eventmanagement.facade.EventDetails;
+import com.example.eventmanagement.facade.EventDetailsFacade;
+import com.example.eventmanagement.facade.PaymentDetails;
+import com.example.eventmanagement.facade.PaymentDetailsFacade;
+import com.example.eventmanagement.service.PaymentGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
- * PaymentGenerationServiceImpl – core business logic for Payment Report Generation.
+ * PaymentGenerationServiceImpl – assembles a payment report by delegating
+ * to one facade per subsystem.
  *
  * ✅ Design Pattern  : Facade Pattern
- *
  * ✅ Design Principle: Dependency Inversion Principle (DIP)
  */
+@Service
+public class PaymentGenerationServiceImpl implements PaymentGenerationService {
 
-public class PaymentGenerationServiceImpl implements PaymentGenerationService{
-    public EventDetails getEventDetails(Long Id){
-        EventDetailsFacade d = new EventDetailsFacade();
-        Event event = (Event)d.getDetails();
-        return event;
+    private final EventDetailsFacade eventDetailsFacade;
+    private final ClubDetailsFacade clubDetailsFacade;
+    private final PaymentDetailsFacade paymentDetailsFacade;
+
+    @Autowired
+    public PaymentGenerationServiceImpl(EventDetailsFacade eventDetailsFacade,
+                                        ClubDetailsFacade clubDetailsFacade,
+                                        PaymentDetailsFacade paymentDetailsFacade) {
+        this.eventDetailsFacade = eventDetailsFacade;
+        this.clubDetailsFacade = clubDetailsFacade;
+        this.paymentDetailsFacade = paymentDetailsFacade;
     }
 
-    public ClubDetails getClubDetails(Long Id){
-        ClubDetailsFacade d = new ClubDetailsFacade();
-        Club club = (Club)d.getDetails();
-        return club;
+    @Override
+    public EventDetails getEventDetails(Long eventId) {
+        return (EventDetails) eventDetailsFacade.getDetails(eventId);
     }
 
-    public PaymentDetails(Long Id){
-        PaymentDetails d = new PaymentDetails();
-        PaymentD paymentd = (PaymentD)d.getDetails();
-        return paymentd;
+    @Override
+    public ClubDetails getClubDetails(Long clubId) {
+        return (ClubDetails) clubDetailsFacade.getDetails(clubId);
+    }
+
+    @Override
+    public PaymentDetails getPaymentDetails(Long paymentId) {
+        return (PaymentDetails) paymentDetailsFacade.getDetails(paymentId);
     }
 }
